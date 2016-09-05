@@ -63,9 +63,10 @@ export class MainPage extends React.Component {
 
   toggleSidebar = () => {
       this.setState({ sidebarPinned: !this.state.sidebarPinned });
-  };
+  }; 
 
-  fetch('http://films.imhonet.ru/web.php?path=element/187631/&domain=films',{  
+  render() {
+  let jsn = fetch('http://films.imhonet.ru/web.php?path=element/187631/&domain=films',{  
         headers: {  
           "Accept":"application/json",
     "X-Requested-With":"XMLHttpRequest"
@@ -74,9 +75,7 @@ export class MainPage extends React.Component {
   )
   .then(json).then(function(response) {  
       this.setState(statistics:response.content.content.statistics) 
-  }) 
-
-  render() {
+  })
     return (
         <Layout>
           <NavDrawer active={this.state.drawerActive}
