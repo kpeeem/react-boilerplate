@@ -2,8 +2,6 @@
  * COMMON WEBPACK CONFIGURATION
  */
 
-var ExtractTextPlugin = require("extract-text-webpack-plugin");
-
 const path = require('path');
 const webpack = require('webpack');
 
@@ -24,9 +22,6 @@ module.exports = (options) => ({
       test: /\.css$/,
       exclude: /node_modules/,
       loader: options.cssLoaders,
-    }, {
-        test: /\.(scss|css)$/,
-        loader: ExtractTextPlugin.extract('style', 'css?sourceMap&modules&importLoaders=1&localIdentName=[name]__[local]___[hash:base64:5]!postcss!sass?sourceMap')
     }, {
       // Do not transform vendor's CSS with CSS-modules
       // The point is that they remain in global scope.
@@ -80,7 +75,7 @@ module.exports = (options) => ({
       '.jsx',
       '.react.js',
     ],
-    packageMains: [
+    mainFields: [
       'jsnext:main',
       'main',
     ],
