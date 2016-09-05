@@ -1,1 +1,1 @@
-REACT PLAYGROUNG based on react-boilerplate
+REACT PLAYGROUND based on react-boilerplate
