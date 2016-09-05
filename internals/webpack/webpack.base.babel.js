@@ -4,6 +4,7 @@
 
 const path = require('path');
 const webpack = require('webpack');
+const DashboardPlugin = require('webpack-dashboard/plugin');
 
 module.exports = (options) => ({
   entry: options.entry,
@@ -19,8 +20,8 @@ module.exports = (options) => ({
       query: options.babelQuery,
     }, {
       // Transform our own .css files with PostCSS and CSS-modules
-      test: /\.css$/,
-      exclude: /node_modules/,
+      test: /\.s?css$/,
+      exclude: /node_modules\/(?!(react-toolbox|component-playground)\/).*/,
       loader: options.cssLoaders,
     }, {
       // Do not transform vendor's CSS with CSS-modules
@@ -52,6 +53,7 @@ module.exports = (options) => ({
     }],
   },
   plugins: options.plugins.concat([
+    new DashboardPlugin(),
     new webpack.ProvidePlugin({
       // make fetch available
       fetch: 'exports?self.fetch!whatwg-fetch',

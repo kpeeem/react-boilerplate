@@ -8,6 +8,9 @@ export default class url {
       this[key] = customUrl ? customUrl[key] : window.location[key]
     });  
   }
+  static init = (customUrl=null) => {
+        return new url(customUrl);
+  };
   get(params='href'){
     if(params === 'href'){
       this.str = this.protocol + '//' + this.hostname + this.port + this.pathname + this.search + this.hash
@@ -29,7 +32,8 @@ export default class url {
       this.str = this.hostname + this.port
       return this
     }else if(params === 'search'){
-      this.str = this.search
+      this.search || this.setSearch(Object.keys(this.query).reduce((acc, val) => acc + '&' + val + '=' + this.query[val]))
+      this.str = this.search 
       return this
     }else if(params === 'hash'){
       this.str = this.hash.substring(0,40)

@@ -1,22 +1,38 @@
 /*
- * FeaturePage
- *
- * List all the features
+ * MainPage
  */
 import React from 'react';
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
 
 import urlParse from 'utils/url';
+import uri from 'urijs';
+import Playground from 'component-playground';
+import fetch from 'node-fetch';
 
-import Button from 'components/Button';
+import {Button} from 'react-toolbox/lib/button';
+import JsonView from 'containers/JsonView';
+import StatisticsBars from 'containers/StatisticsBars';
 import H1 from 'components/H1';
 import Input from 'react-toolbox/lib/input';
+import { AppBar, Checkbox, IconButton } from 'react-toolbox';
+import { Layout, NavDrawer, Panel, Sidebar } from 'react-toolbox';
+
+require('codemirror/mode/javascript/javascript');
 
 import styles from './styles.css';
 
-export class FeaturePage extends React.Component {
-state = { url: ''}
+let componentExample = "<Button style={{background: '#3498db'}}>Hi</Button>";
+let StatisticsBarsRaw = require("raw!containers/StatisticsBars/index.example");
+
+export class MainPage extends React.Component {
+  state = { 
+    url: 'https://github.com/foo/bar',
+    drawerActive: false,
+    drawerPinned: false,
+    sidebarPinned: false,
+    statistics:false
+  }
   /**
    * Changes the route
    *
@@ -37,21 +53,59 @@ state = { url: ''}
     this.setState({...this.state, [url]: value});
   };
 
+  toggleDrawerActive = () => {
+        this.setState({ drawerActive: !this.state.drawerActive });
+  };
+
+  toggleDrawerPinned = () => {
+      this.setState({ drawerPinned: !this.state.drawerPinned });
+  }
+
+  toggleSidebar = () => {
+      this.setState({ sidebarPinned: !this.state.sidebarPinned });
+  };
+
+  fetch('http://films.imhonet.ru/web.php?path=element/187631/&domain=films',{  
+        headers: {  
+          "Accept":"application/json",
+    "X-Requested-With":"XMLHttpRequest"
+        }
+    }
+  )
+  .then(json).then(function(response) {  
+      this.setState(statistics:response.content.content.statistics) 
+  }) 
+
   render() {
-    let url = new urlParse('https://github.com/foo/bar')
     return (
-      <div>
-        <H1>PLAYGROUND</H1>
-        <Input type='text' label='URL' name='URL' value={this.state.url} onChange={this.handleChange.bind(this, 'url')} maxLength={16 } />
-        <article>
-        {url.get('href').str}
-        </article>
-        <Button handleRoute={this.openHomePage}>Home</Button>
-      </div>
+        <Layout>
+          <NavDrawer active={this.state.drawerActive}
+              pinned={this.state.drawerPinned} permanentAt='xxxl'
+              onOverlayClick={ this.toggleDrawerActive }>
+              <p>
+                  Navigation, account switcher, etc. go here.
+              </p>
+          </NavDrawer>
+          <Panel>
+              <AppBar><IconButton icon='menu' inverse={ true } onClick={ this.toggleDrawerActive }/></AppBar>
+              <div style={{ flex: 1, overflowY: 'auto', padding: '1.8rem' }}>
+                  <Input type='text' label='URL' name='URL' value={this.state.url} onChange={this.handleChange.bind(this, 'url')} />
+                  <JsonView data={uri(this.state.url).query('werwerew')} />
+                  <JsonView data={uri(this.state.url).directory('element')} />
+                  <p className={styles.text}>{uri(this.state.url).href()}</p>
+
+                  <Playground codeText={componentExample} scope={{React: React, Button: Button}}/>
+                  {this.state.statistics && <StatisticsBars data={this.state.statistics} />}
+                  {<Playground codeText={StatisticsBarsRaw} scope={{React: React, StatisticsBars: StatisticsBars}}/>}
+              </div>
+          </Panel>
+        
+      </Layout>
+
     );
   }
 }
-FeaturePage.propTypes = {
+MainPage.propTypes = {
   changeRoute: React.PropTypes.func,
 };
 
@@ -61,4 +115,4 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-export default connect(null, mapDispatchToProps)(FeaturePage);
+export default connect(null, mapDispatchToProps)(MainPage);
