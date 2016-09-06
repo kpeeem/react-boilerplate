@@ -2,7 +2,6 @@
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const OfflinePlugin = require('offline-plugin');
 
 // PostCSS plugins
@@ -21,11 +20,6 @@ module.exports = require('./webpack.base.babel')({
     filename: '[name].[chunkhash].js',
     chunkFilename: '[name].[chunkhash].chunk.js',
   },
-
-  // We use ExtractTextPlugin so we get a seperate CSS file instead
-  // of the CSS being in the JS and injected as a style tag
-  cssLoaders: 'style-loader!css-loader?modules&importLoaders=1&sourceMap!postcss-loader!sass-loader',
-
   // In production, we minify our CSS with cssnano
   postcssPlugins: [
     postcssFocus(),

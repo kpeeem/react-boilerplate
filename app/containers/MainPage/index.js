@@ -59,7 +59,7 @@ export class MainPage extends React.Component {
 
   toggleDrawerPinned = () => {
       this.setState({ drawerPinned: !this.state.drawerPinned });
-  }
+  };
 
   toggleSidebar = () => {
       this.setState({ sidebarPinned: !this.state.sidebarPinned });
@@ -74,8 +74,8 @@ export class MainPage extends React.Component {
     }
   )
   .then(json).then(function(response) {  
-      this.setState(statistics:response.content.content.statistics) 
-  })
+      this.setState({statistics:response.content.content.statistics})
+  });
     return (
         <Layout>
           <NavDrawer active={this.state.drawerActive}

@@ -1,5 +1,5 @@
 import React from 'react';
-import style from './style.scss';
+import style from './style.styl';
 import _ from 'lodash';
 import Waypoint from 'react-waypoint';
 

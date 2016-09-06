@@ -20,9 +20,18 @@ module.exports = (options) => ({
       query: options.babelQuery,
     }, {
       // Transform our own .css files with PostCSS and CSS-modules
-      test: /\.s?css$/,
-      exclude: /node_modules\/(?!(react-toolbox|component-playground)\/).*/,
-      loader: options.cssLoaders,
+      test: /\.scss$/,
+      loader: 'style-loader!css-loader?modules&importLoaders=1&sourceMap!sass-loader',
+    }, {
+      // Transform our own .css files with PostCSS and CSS-modules
+      test: /\.styl$/,
+      include: /app/,
+      loader: 'style!css?modules&importLoaders=1&localIdentName=[name]_[local]__[hash:base64:5]!postcss!stylus-loader'
+    },  {
+      // Transform our own .css files with PostCSS and CSS-modules
+      test: /\.css$/,
+      include: /app/,
+      loader:  'style-loader!css-loader?modules&-autoprefixer&importLoaders=1'
     }, {
       // Do not transform vendor's CSS with CSS-modules
       // The point is that they remain in global scope.
@@ -52,6 +61,10 @@ module.exports = (options) => ({
       loader: 'url-loader?limit=10000',
     }],
   },
+  // sassLoader: {
+  //   data: '@import "_config.scss";',
+  //   includePaths: [path.resolve(__dirname, './../../node_modules/react-toolbox')]
+  // },
   plugins: options.plugins.concat([
     new DashboardPlugin(),
     new webpack.ProvidePlugin({
@@ -73,6 +86,8 @@ module.exports = (options) => ({
     modules: ['app', 'node_modules'],
     extensions: [
       '',
+      'scss',
+      'styl',
       '.js',
       '.jsx',
       '.react.js',
