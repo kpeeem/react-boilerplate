@@ -5,8 +5,11 @@
 const path = require('path');
 const webpack = require('webpack');
 const DashboardPlugin = require('webpack-dashboard/plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+
 
 module.exports = (options) => ({
+  debug: true,
   entry: options.entry,
   output: Object.assign({ // Compile into js/build.js
     path: path.resolve(process.cwd(), 'build'),
@@ -18,10 +21,6 @@ module.exports = (options) => ({
       loader: 'babel',
       exclude: /node_modules/,
       query: options.babelQuery,
-    }, {
-      // Transform our own .css files with PostCSS and CSS-modules
-      test: /\.scss$/,
-      loader: 'style-loader!css-loader?modules&importLoaders=1&sourceMap!sass-loader',
     }, {
       // Transform our own .css files with PostCSS and CSS-modules
       test: /\.styl$/,
@@ -61,12 +60,8 @@ module.exports = (options) => ({
       loader: 'url-loader?limit=10000',
     }],
   },
-  // sassLoader: {
-  //   data: '@import "_config.scss";',
-  //   includePaths: [path.resolve(__dirname, './../../node_modules/react-toolbox')]
-  // },
   plugins: options.plugins.concat([
-    new DashboardPlugin(),
+    //new DashboardPlugin(),
     new webpack.ProvidePlugin({
       // make fetch available
       fetch: 'exports?self.fetch!whatwg-fetch',
@@ -83,13 +78,14 @@ module.exports = (options) => ({
   ]),
   postcss: () => options.postcssPlugins,
   resolve: {
+    // root: paths.base(config.dir_client),
     modules: ['app', 'node_modules'],
     extensions: [
       '',
-      'scss',
-      'styl',
       '.js',
       '.jsx',
+      '.scss',
+      '.styl',
       '.react.js',
     ],
     mainFields: [

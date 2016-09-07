@@ -23,7 +23,8 @@
     "build": "cross-env NODE_ENV=production webpack --config internals/webpack/webpack.prod.babel.js --color -p",
     "build:clean": "npm run test:clean && rimraf ./build",
     "build:dll": "node ./internals/scripts/dependencies.js",
-    "start": "cross-env NODE_ENV=development webpack-dashboard --  node server",
+    "start": "cross-env NODE_ENV=development  node server",
+    "startDash": "cross-env NODE_ENV=development webpack-dashboard --  node server",
     "start:tunnel": "cross-env NODE_ENV=development ENABLE_TUNNEL=true node server",
     "start:production": "npm run build && npm run start:prod",
     "start:prod": "cross-env NODE_ENV=production node server",
@@ -180,6 +181,9 @@
     ]
   },
   "dependencies": {
+    "babel": "^6.5.2",
+    "babel-browser": "^6.1.19",
+    "babel-browser-transform": "^0.1.0",
     "babel-polyfill": "6.13.0",
     "chalk": "1.1.3",
     "component-playground": "^1.3.1",
@@ -202,6 +206,7 @@
     "react": "15.3.0",
     "react-addons-css-transition-group": "^15.3.1",
     "react-codemirror": "^0.2.6",
+    "react-desktop": "^0.2.13",
     "react-dom": "15.3.0",
     "react-helmet": "3.1.0",
     "react-intl": "2.1.3",

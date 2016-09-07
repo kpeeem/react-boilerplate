@@ -8,31 +8,28 @@ import { push } from 'react-router-redux';
 import urlParse from 'utils/url';
 import uri from 'urijs';
 import Playground from 'component-playground';
-import fetch from 'node-fetch';
+import Preview from 'containers/Preview';
 
-import {Button} from 'react-toolbox/lib/button';
+require('es6-promise').polyfill();
+require('isomorphic-fetch');
+
 import JsonView from 'containers/JsonView';
 import StatisticsBars from 'containers/StatisticsBars';
 import H1 from 'components/H1';
-import Input from 'react-toolbox/lib/input';
-import { AppBar, Checkbox, IconButton } from 'react-toolbox';
-import { Layout, NavDrawer, Panel, Sidebar } from 'react-toolbox';
 
 require('codemirror/mode/javascript/javascript');
 
 import styles from './styles.css';
 
-let componentExample = "<Button style={{background: '#3498db'}}>Hi</Button>";
-let StatisticsBarsRaw = require("raw!containers/StatisticsBars/index.example");
+let componentExample = `<H1>Hi</H1>`;
+let StatisticsBarsRaw = require("raw!containers/StatisticsBars/index.js");
 
 export class MainPage extends React.Component {
-  state = { 
+  state = {
     url: 'https://github.com/foo/bar',
-    drawerActive: false,
-    drawerPinned: false,
-    sidebarPinned: false,
-    statistics:false
-  }
+    statistics:false,
+    demo: StatisticsBarsRaw
+  };
   /**
    * Changes the route
    *
@@ -45,7 +42,7 @@ export class MainPage extends React.Component {
   /**
    * Changed route to '/'
    */
-  openHomePage = () => {
+  openHomePage () {
     this.openRoute('/');
   };
 
@@ -53,64 +50,71 @@ export class MainPage extends React.Component {
     this.setState({...this.state, [url]: value});
   };
 
-  toggleDrawerActive = () => {
-        this.setState({ drawerActive: !this.state.drawerActive });
-  };
+  componentWillMount(){
+    let jsn = fetch('http://films.imhonet.ru/web.php?path=element/187631/&domain=films',{
+          headers: {
+            "Accept":"application/json",
+      "X-Requested-With":"XMLHttpRequest"
+          }
+      }
+    ).then(response => {
+      if (response.status >= 400) {
+        throw new Error("Bad response from server");
+      }
+      return response.json();
+    })
+    .then(response => {
+        this.setState({statistics:response.content.content.statistics})    
+    });
+  }
 
-  toggleDrawerPinned = () => {
-      this.setState({ drawerPinned: !this.state.drawerPinned });
-  };
+  onChangeCode(code) {
+    const demo = this.state.demo;
 
-  toggleSidebar = () => {
-      this.setState({ sidebarPinned: !this.state.sidebarPinned });
-  }; 
+    demo.code = code;
+
+    this.setState({demo});
+  }
 
   render() {
-  let jsn = fetch('http://films.imhonet.ru/web.php?path=element/187631/&domain=films',{  
-        headers: {  
-          "Accept":"application/json",
-    "X-Requested-With":"XMLHttpRequest"
-        }
-    }
-  )
-  .then(json).then(function(response) {  
-      this.setState({statistics:response.content.content.statistics})
-  });
     return (
-        <Layout>
-          <NavDrawer active={this.state.drawerActive}
-              pinned={this.state.drawerPinned} permanentAt='xxxl'
-              onOverlayClick={ this.toggleDrawerActive }>
-              <p>
-                  Navigation, account switcher, etc. go here.
-              </p>
-          </NavDrawer>
-          <Panel>
-              <AppBar><IconButton icon='menu' inverse={ true } onClick={ this.toggleDrawerActive }/></AppBar>
-              <div style={{ flex: 1, overflowY: 'auto', padding: '1.8rem' }}>
-                  <Input type='text' label='URL' name='URL' value={this.state.url} onChange={this.handleChange.bind(this, 'url')} />
-                  <JsonView data={uri(this.state.url).query('werwerew')} />
-                  <JsonView data={uri(this.state.url).directory('element')} />
-                  <p className={styles.text}>{uri(this.state.url).href()}</p>
+            <div>
 
-                  <Playground codeText={componentExample} scope={{React: React, Button: Button}}/>
-                  {this.state.statistics && <StatisticsBars data={this.state.statistics} />}
-                  {<Playground codeText={StatisticsBarsRaw} scope={{React: React, StatisticsBars: StatisticsBars}}/>}
+              <input
+                label="My Input"
+                placeholder="My Input"
+                value={this.state.url}
+                onChange={this.handleChange.bind(this, 'url')}
+              />
+              <JsonView data={uri(this.state.url).query('werwerew')} />
+              <JsonView data={uri(this.state.url).directory('element')} />
+              <p className={styles.text}>{uri(this.state.url).href()}</p>
+
+              <Playground codeText={componentExample} scope={{React: React, H1: H1}}/>
+
+              {this.state.statistics && <StatisticsBars data={this.state.statistics} />}
+              <div className='demo'>
+                <Preview code={StatisticsBarsRaw} scope={{React: React, StatisticsBars: StatisticsBars}}/>
               </div>
-          </Panel>
-        
-      </Layout>
+              <pre className='code'>
+                <Editor
+                  onChange={this.onChangeCode}
+                  className="code-editor"
+                  codeText={StatisticsBarsRaw}
+                  theme={"monokai"}
+                />
+              </pre>
 
-    );
+              
+            </div>
+
+      );
   }
 }
-MainPage.propTypes = {
-  changeRoute: React.PropTypes.func,
-};
 
 function mapDispatchToProps(dispatch) {
   return {
-    changeRoute: (url) => dispatch(push(url)),
+    changeRoute: (url) => dispatch(push(url))
   };
 }
 

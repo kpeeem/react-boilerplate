@@ -1,12 +1,11 @@
 import React from 'react';
 import style from './style.styl';
 import _ from 'lodash';
-import Waypoint from 'react-waypoint';
 
 export default React.createClass({
     getInitialState: function() {
         return {
-            animate:false
+            animate:true
         };
     },
     getDefaultProps: function() {
@@ -15,13 +14,11 @@ export default React.createClass({
         }
     },
     render(){
+        // debugger
+        console.log(this.props.data)
         let sumRecords = _.sum(_.map(this.props.data.rates_distribution, item => item.count));
         return (
             <div className={style.wrapper}>
-                <Waypoint
-                    onEnter={() => this.setState({ animate:true })}
-                    threshold={2.0}
-                />
                 {_.range(1,11).map((item, idx) => (
                     <ChartItem
                         className={style.chart}
