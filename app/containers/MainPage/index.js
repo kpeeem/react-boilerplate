@@ -2,13 +2,14 @@
  * MainPage
  */
 import React from 'react';
+import ReactDOM from "react-dom";
 import { connect } from 'react-redux';
 import { push } from 'react-router-redux';
 
 import urlParse from 'utils/url';
 import uri from 'urijs';
 import Playground from 'component-playground';
-import Preview from 'containers/Preview';
+// import Preview from 'containers/Preview';
 
 require('es6-promise').polyfill();
 require('isomorphic-fetch');
@@ -22,7 +23,7 @@ require('codemirror/mode/javascript/javascript');
 import styles from './styles.css';
 
 let componentExample = `<H1>Hi</H1>`;
-let StatisticsBarsRaw = require("raw!containers/StatisticsBars/index.js");
+let StatisticsBarsRaw = require("raw!containers/StatisticsBars/index.example");
 
 export class MainPage extends React.Component {
   state = {
@@ -31,7 +32,7 @@ export class MainPage extends React.Component {
     demo: StatisticsBarsRaw
   };
   /**
-   * Changes the route
+   * Changes the routereact-hmre
    *
    * @param  {string} route The route we want to go to
    */
@@ -90,21 +91,11 @@ export class MainPage extends React.Component {
               <JsonView data={uri(this.state.url).directory('element')} />
               <p className={styles.text}>{uri(this.state.url).href()}</p>
 
-              <Playground codeText={componentExample} scope={{React: React, H1: H1}}/>
+              <Playground codeText={componentExample} noRender={false} scope={{React: React, H1: H1}}/>
+              {this.state.statistics && <Playground codeText={StatisticsBarsRaw} noRender={false} scope={{React: React, DATA:this.state.statistics, ReactDOM:ReactDOM , StatisticsBars: StatisticsBars}}/>}
+
 
               {this.state.statistics && <StatisticsBars data={this.state.statistics} />}
-              <div className='demo'>
-                <Preview code={StatisticsBarsRaw} scope={{React: React, StatisticsBars: StatisticsBars}}/>
-              </div>
-              <pre className='code'>
-                <Editor
-                  onChange={this.onChangeCode}
-                  className="code-editor"
-                  codeText={StatisticsBarsRaw}
-                  theme={"monokai"}
-                />
-              </pre>
-
               
             </div>
 
