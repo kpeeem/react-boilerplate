@@ -23,7 +23,7 @@ require('codemirror/mode/javascript/javascript');
 import styles from './styles.css';
 
 let componentExample = `<H1>Hi</H1>`;
-let StatisticsBarsRaw = require("raw!containers/StatisticsBars/index.example");
+let StatisticsBarsRaw = require("raw!containers/StatisticsBars/index.js");
 
 export class MainPage extends React.Component {
   state = {

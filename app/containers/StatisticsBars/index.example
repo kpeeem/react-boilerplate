@@ -60,4 +60,4 @@ let ChartItem = React.createClass({
 });
 
 
-ReactDOM.render(<Chart data={DATA} />, mountNode);
+<Chart data={DATA} />
